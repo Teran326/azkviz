@@ -1,1 +1,10 @@
-Administrátor;předložka a přípona;veverka obecná;Vladimír Iljič Uljanov;Honiara;vrchol vysílače Praděd;Česká a Slovenská federatvní republika;Paluba bitevní lodi Missouri v Tokijském zálivu;Vatikán;Kostík
+Administrátor
+předložka a přípona
+veverka obecná
+Vladimír Iljič Uljanov
+Honiara
+vrchol vysílače Praděd
+Česká a Slovenská federatvní republika
+Paluba bitevní lodi Missouri v Tokijském zálivu
+Vatikán
+Kostík
