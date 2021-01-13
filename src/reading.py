@@ -5,16 +5,17 @@ class RaW:
     def __init__(self, file, score):
         self.file = file
         self.score = score
+        self.i = self.i
 
     def reading(self):
-        i = 0
+        self.i = 0
         with io.open(self.file, mode="r", encoding="utf-8") as f:
             if f.mode == 'r':
                 for line in f:
-                    i += 1
+                    self.i += 1
                     print(line)
 
-            print(i)
+            print(self.i)
 
     def writing(self):
         if self.file:
