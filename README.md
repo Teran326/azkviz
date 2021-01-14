@@ -1,0 +1,2 @@
+# azkviz
+Pololetni projekt
