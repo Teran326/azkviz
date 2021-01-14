@@ -29,7 +29,7 @@ class Sestiuhelnik(pygame.sprite.Sprite):
         #self.barva = (255,0,0)
         #důležité pro souradnce
         self.oznaceni = para.bc
-        self.cislo = [para.ocislovani, para.rada]
+        self.cislo = [para.souradnice, para.rada]
         self.podminka = [None, None, None] #levá strana, dolní strana, pravá strana
         self.odecteni_y = self.bod6[1] - self.bod1[1]  #polovina horního trojúhelníku v šestiúhelníku v y
         self.odecteni_x = (self.bod2[0] - self.bod6[0])/2 #polovina horního trojúhelníku v šestiúhelníku v x
@@ -49,11 +49,13 @@ class Sestiuhelnik(pygame.sprite.Sprite):
         if para.ocislovani >= para.rada/2:
             para.rada += 1
             para.ocislovani = -math.floor(para.rada/2)
+            para.souradnice = 0
             self.podminka[0] = True
             #print("^levá strana" )
-        #print(self.podminka)
+        #print(self.cislo)
         para.ocislovani += 1
         para.bc += 1
+        para.souradnice += 1
 
         #print(self.cislo)
     def update(self, pos, pixel):
@@ -68,7 +70,7 @@ class Sestiuhelnik(pygame.sprite.Sprite):
                     self.DEFIbarva = (0,255-math.floor(self.oznaceni/2) ,255-math.floor(self.oznaceni/2), 255)
                     #sestiuhelniky_zabrane_M.add(entity)
                     hracM.update(self.podminka[0], self.podminka[1], self.podminka[2])
-                print(para.zacinajici_hrac)
+                #print(para.zacinajici_hrac)
                     #print(self.podminka)
             #elif pos[1] >= self.bod1[1] and pos[1] <= self.bod5[1]:
         #self.kill()
@@ -123,7 +125,7 @@ class M_hrac(pygame.sprite.Sprite): #modrý hrac
 class Otazka (pygame.sprite.Sprite):
     def __init__(self):
         super(Otazka, self).__init__()
-
+        '''
         self.bod1 = ((para.vrchol_x / 10) - para.mezera, ((para.velikost * para.rada)*(para.velikost*1.25)))
         self.bod2 = ((para.vrchol_x / 6 - para.mezera), (((para.velikost * para.rada)*(para.velikost*1.25)) + para.velikost *2))
         self.bod3 = ((para.vrchol_x / 2.75 + para.velikost * 10 + para.vrchol_x - para.mezera), (((para.velikost * para.rada)*(para.velikost*1.25)) + para.velikost *2))
@@ -132,18 +134,42 @@ class Otazka (pygame.sprite.Sprite):
         self.bod6 = ((para.vrchol_x / 6 - para.mezera), (((para.velikost * para.rada)*(para.velikost*1.25)) - para.velikost *2))
         #verze na automatické zobrazení pomocí počtu rad - NEMAZAT
         '''
-        self.bod1 = ((para.vrchol_x / 10) - para.mezera, ((para.velikost ** para.zadano) * (para.zadano * para.velikost)))
-        self.bod2 = ((para.vrchol_x / 6 - para.mezera), (((para.velikost ** para.zadano) * (para.zadano * para.velikost)) + para.velikost *2))
-        self.bod3 = ((para.vrchol_x / 2.75 + para.velikost * 10 + para.vrchol_x - para.mezera), (((para.velikost ** para.zadano) * (para.zadano * para.velikost)) + para.velikost *2))
-        self.bod4 = (((para.vrchol_x / 10)*19), ((para.velikost ** para.zadano) * (para.zadano * para.velikost)))
-        self.bod5 = ((para.vrchol_x / 2.75 + para.velikost * 10 + para.vrchol_x - para.mezera),(((para.velikost ** para.zadano) * (para.zadano * para.velikost)) - para.velikost *2))
-        self.bod6 = ((para.vrchol_x / 6 - para.mezera), (((para.velikost ** para.zadano) * (para.zadano * para.velikost)) - para.velikost *2))
-        '''
+        self.bod1 = (para.obrazovka_x-((para.vrchol_x / 10)*19), ((para.vrchol_y + 2 * para.velikost + para.odsazeni_y*para.zadano)+ para.velikost*2))
+        self.bod2 = ((para.obrazovka_x-((para.vrchol_x / 2.75 + para.velikost * 10 + para.vrchol_x - para.mezera))), ((para.vrchol_y + 2 * para.velikost + para.odsazeni_y*para.zadano)+ para.velikost*3))
+        self.bod3 = ((para.vrchol_x / 2.75 + para.velikost * 10 + para.vrchol_x - para.mezera), ((para.vrchol_y + 2 * para.velikost + para.odsazeni_y*para.zadano)+ para.velikost*3))
+        self.bod4 = (((para.vrchol_x / 10)*19), ((para.vrchol_y + 2 * para.velikost + para.odsazeni_y*para.zadano)+ para.velikost*2))
+        self.bod5 = ((para.vrchol_x / 2.75 + para.velikost * 10 + para.vrchol_x - para.mezera),((para.vrchol_y + 2 * para.velikost + para.odsazeni_y*para.zadano)+ para.velikost ))
+        self.bod6 = ((para.vrchol_x / 6 - para.mezera), ((para.vrchol_y + 2 * para.velikost + para.odsazeni_y*para.zadano)+ para.velikost))
+
     def update(self):
         pass
         #sem pokud možno script na otázky
+class Odpovedi (pygame.sprite.Sprite):
+    def __init__(self):
+        super(Odpovedi, self).__init__()
+        #/2 od normal u bod3,4,5 X
+        self.rada = para.rada_odpovedi
+        self.umisteni = para.umisteni_odpovedi
+        self.sou = [self.umisteni, self.rada]  # pouze pro kontrolu, nemá jinačí využití
+        self.random = para.rada_odpovedi + para.umisteni_odpovedi #nemá zatím využití, možno použít u odpovědí pokud budeme otázky dávat na random
+        if para.umisteni_odpovedi == 1:
+            para.rada_odpovedi += 1
+            para.umisteni_odpovedi = 0
+        else:
+            para.umisteni_odpovedi += 1
+        self.bod1 = (para.obrazovka_x-((para.vrchol_x / 10)*19) + (self.umisteni*((para.vrchol_x/10)*9.5)), ((para.vrchol_y + 2 * para.velikost + para.odsazeni_y*para.zadano) + para.velikost*2*2.5 + (self.rada*(para.velikost*3))))
+        self.bod2 = ((para.obrazovka_x-((para.vrchol_x / 2.75 + para.velikost * 10 + para.vrchol_x - para.mezera))+ (self.umisteni*((para.vrchol_x/10)*9.5))), ((para.vrchol_y + 2 * para.velikost + para.odsazeni_y*para.zadano) + para.velikost*3*2+ (self.rada*(para.velikost*3))))
+        self.bod3 = (((para.vrchol_x / 2.75 + para.velikost * 10 + para.vrchol_x - para.mezera)/2 - para.mezera + (self.umisteni*((para.vrchol_x/10)*9.5))), ((para.vrchol_y + 2 * para.velikost + para.odsazeni_y*para.zadano) + para.velikost*3*2+ (self.rada*(para.velikost*3))))
+        self.bod4 = ((((para.vrchol_x / 10)*19)/2 + (self.umisteni*((para.vrchol_x/10)*9.5))), ((para.vrchol_y + 2 * para.velikost + para.odsazeni_y*para.zadano) + para.velikost*2*2.5+ (self.rada*(para.velikost*3))))
+        self.bod5 = (((para.vrchol_x / 2.75 + para.velikost * 10 + para.vrchol_x - para.mezera)/2 - para.mezera + (self.umisteni*((para.vrchol_x/10)*9.5))),((para.vrchol_y + 2 * para.velikost + para.odsazeni_y*para.zadano) + para.velikost*4+ (self.rada*(para.velikost*3))))
+        self.bod6 = ((para.vrchol_x / 6 - para.mezera + (self.umisteni*((para.vrchol_x/10)*9.5))), ((para.vrchol_y + 2 * para.velikost + para.odsazeni_y*para.zadano) + para.velikost*4+ (self.rada*(para.velikost*3))))
+        print(self.sou)
+    def groups(self):
+        pass
 
 ADDSESTIUHELNIK = pygame.USEREVENT + 1
+ADDODPOVEDI = pygame.USEREVENT + 2
+
 pygame.time.set_timer(ADDSESTIUHELNIK,10)
 sestiuhelnik = Sestiuhelnik()
 sestiuhelniky = pygame.sprite.Group()
@@ -152,6 +178,15 @@ sestiuhelniky_zabrane_M = pygame.sprite.Group()
 hracM = M_hrac()
 hracO = O_hrac()
 pole_otazky = Otazka()
+pole_odpovedi = pygame.sprite.Group()
+odpoved1 = Odpovedi()
+odpoved2 = Odpovedi()
+odpoved3 = Odpovedi()
+odpoved4 = Odpovedi()
+pole_odpovedi.add(odpoved1)
+pole_odpovedi.add(odpoved2)
+pole_odpovedi.add(odpoved3)
+pole_odpovedi.add(odpoved4)
 
 while para.running:
     for event in pygame.event.get():
@@ -162,7 +197,7 @@ while para.running:
                 para.running = False
         elif event.type == pygame.MOUSEBUTTONDOWN:
             cas.tick(2000)
-            print("click")
+            #print("click")
             pos = pygame.mouse.get_pos()
             pixel = para.obrazovka.get_at((pos))
             #obstacle = pygame.mask.from_surface(surf)
@@ -175,12 +210,13 @@ while para.running:
                         para.premena = para.premena2
                         sestiuhelniky.update(pos, pixel)
                         pole_otazky.update()#DOKONCIT
+                        print(entity.cislo)
                         para.zacatek = False
                         if para.zacinajici_hrac == True:
                             sestiuhelniky_zabrane_O.add(entity)
                         if para.zacinajici_hrac == False:
                             sestiuhelniky_zabrane_M.add(entity)
-                        print(sestiuhelniky_zabrane_M)
+                        #print(sestiuhelniky_zabrane_M)
             #hracO.update(sestiuhelniky_zabrane_O)
             #hracM.update(sestiuhelniky_zabrane_M)
             #sestiuhelniky_zabrane.update()
@@ -235,8 +271,13 @@ while para.running:
     pygame.draw.polygon(para.obrazovka, barva2,(hracO.bod1, hracO.bod2, hracO.bod3, hracO.bod4, hracO.bod5, hracO.bod6))
     if para.zacatek == True:
         barva3 = para.sed
+    # Otázka
     pygame.draw.polygon(para.obrazovka, barva3,(pole_otazky.bod1, pole_otazky.bod2, pole_otazky.bod3, pole_otazky.bod4, pole_otazky.bod5, pole_otazky.bod6))
-
+    #Odpovědi
+    pygame.draw.polygon(para.obrazovka, barva3, (odpoved1.bod1, odpoved1.bod2, odpoved1.bod3, odpoved1.bod4, odpoved1.bod5, odpoved1.bod6))
+    pygame.draw.polygon(para.obrazovka, barva3, (odpoved2.bod1, odpoved2.bod2, odpoved2.bod3, odpoved2.bod4, odpoved2.bod5, odpoved2.bod6))
+    pygame.draw.polygon(para.obrazovka, barva3, (odpoved3.bod1, odpoved3.bod2, odpoved3.bod3, odpoved3.bod4, odpoved3.bod5, odpoved3.bod6))
+    pygame.draw.polygon(para.obrazovka, barva3, (odpoved4.bod1, odpoved4.bod2, odpoved4.bod3, odpoved4.bod4, odpoved4.bod5, odpoved4.bod6))
     #pygame.display.flip()
 
     pygame.display.flip()

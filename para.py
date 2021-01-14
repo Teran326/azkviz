@@ -35,6 +35,7 @@ mezera = velikost/3
 rada = 0
 #ocislovani
 ocislovani = 0
+souradnice = 0
 #cisla pro barvu
 bc = 0
 #odsazení šestiúhelnkíků
@@ -60,3 +61,5 @@ bod4 = (vrchol_x/4, vrchol_y + 2 * (velikost*3))
 bod5 = (vrchol_x/4 - math.ceil(math.sqrt((velikost*3) ** 2 - ((velikost*3) / 2) ** 2)),vrchol_y + (velikost*3) + (velikost*3) / 2)
 bod6 = (vrchol_x/4 - math.ceil(math.sqrt((velikost*3) ** 2 - ((velikost*3) / 2) ** 2)),vrchol_y + ((velikost*3) / 2))
 #šestiúhelník (vrchol-přímka)
+rada_odpovedi = 0
+umisteni_odpovedi = 0
