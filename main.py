@@ -714,3 +714,4 @@ while para.running:
     cas.tick(100)
     cas.tick(2000)
 pygame_quit = pygame.quit()
+pickle.dump(score, open("src/score.dat", "wb"))
