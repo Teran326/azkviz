@@ -17,8 +17,8 @@ class Buttons(pygame.sprite.Sprite):
 
         if self.text != '':
             font = pygame.font.SysFont('calibri', 30)
-            text = font.render(self.text, True, (0,0,0))
-            screen.blit(text, (self.x + (self.width/10 + text.get_width()/10), self.y + (self.height/2 - text.get_height()/10)))
+            text = font.render(self.text, True, (255,255,255))
+            screen.blit(text, (self.x, self.y + (self.height/2 - text.get_height()/10)))
 
     def isOver(self, pos):
         if pos[0] > self.x and pos[0] < self.x + self.width:
