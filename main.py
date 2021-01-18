@@ -123,7 +123,8 @@ class O_hrac(pygame.sprite.Sprite):  # orandzovy hrac
             self.prava_s = True
         # DODĚLAT PODMÍNKY
         if self.leva_s and self.prava_s and self.dolni_s:
-            print("Orandzovy KONEC")
+            pass
+            #print("Orandzovy KONEC")
 
 
 class M_hrac(pygame.sprite.Sprite):  # modrý hrac
@@ -149,6 +150,7 @@ class M_hrac(pygame.sprite.Sprite):  # modrý hrac
             self.prava_s = True
         # DODĚLAT PODMÍNKY
         if self.leva_s and self.prava_s and self.dolni_s:
+            pass
             print("Modry KONEC")
             '''
 class Otazka (pygame.sprite.Sprite):
@@ -198,12 +200,15 @@ class Odpovedi (pygame.sprite.Sprite):
 
 
 def redrawWin():
+    pygame.draw.rect(screen, (0, 0, 0), (0, 750, 1000, 250))
     # screen.fill((0, 0, 0))
     button1.draw(para.obrazovka, (255,255,255))
     button2.draw(para.obrazovka, (255,255,255))
     button3.draw(para.obrazovka, (255,255,255))
     button4.draw(para.obrazovka, (255,255,255))
     question.draw(para.obrazovka, (0, 0, 0))
+    para.zacatekB = False
+    para.zakliknutiB = False
 
 
 ADDSESTIUHELNIK = pygame.USEREVENT + 1
@@ -258,16 +263,29 @@ for j in range(3):
     while spatne[j] == odpoved:
         spatne[j] = reading[math.floor(random.randint(0, len(reading) - 1))][1]
 
-button1 = buttons.Buttons((0, 255, 0), rozmery[0], 750, para.obrazovka_x / 4 - (para.obrazovka_x / 100 + para.obrazovka_x / 40), 100, odpoved)
-button2 = buttons.Buttons((0, 255, 0), rozmery[1], 750, para.obrazovka_x / 4 - (para.obrazovka_x / 100 + para.obrazovka_x / 40), 100, spatne[0])
-button3 = buttons.Buttons((0, 255, 0), rozmery[2], 750, para.obrazovka_x / 4 - (para.obrazovka_x / 100 + para.obrazovka_x / 40), 100, spatne[1])
-button4 = buttons.Buttons((0, 255, 0), rozmery[3], 750, para.obrazovka_x / 4 - (para.obrazovka_x / 100 + para.obrazovka_x / 40), 100, spatne[2])
+if para.zacinajici_hrac:
+    barva = para.modraA
+else:
+    barva = para.orandzovaA
+
+button1 = buttons.Buttons(barva, rozmery[0], 850, para.obrazovka_x / 4 - (para.obrazovka_x / 100 + para.obrazovka_x / 40), 100, odpoved)
+button2 = buttons.Buttons(barva, rozmery[1], 850, para.obrazovka_x / 4 - (para.obrazovka_x / 100 + para.obrazovka_x / 40), 100, spatne[0])
+button3 = buttons.Buttons(barva, rozmery[2], 850, para.obrazovka_x / 4 - (para.obrazovka_x / 100 + para.obrazovka_x / 40), 100, spatne[1])
+button4 = buttons.Buttons(barva, rozmery[3], 850, para.obrazovka_x / 4 - (para.obrazovka_x / 100 + para.obrazovka_x / 40), 100, spatne[2])
 question = buttons.Buttons((0,0,0), para.obrazovka_x / 5, 760, 500, 45, otazka)
 
 zakliknuti = False
+odpovedK = False
 
 while para.running:
-    if zakliknuti:
+    if para.zacinajici_hrac and not odpovedK:
+        barva = para.orandzovaA
+    elif not para.zacinajici_hrac and not odpovedK:
+        barva = para.modraA
+    elif odpovedK:
+        barva = para.sed
+    #odpovedK = False
+    if para.zakliknutiB or para.zacatekB:
         redrawWin()
     pos = pygame.mouse.get_pos()
     for event in pygame.event.get():
@@ -277,119 +295,136 @@ while para.running:
             if event.key == para.K_ESCAPE:
                 para.running = False
         elif event.type == pygame.MOUSEBUTTONDOWN:
-
             # print("click")
             pixel = para.obrazovka.get_at((pos))
             # obstacle = pygame.mask.from_surface(surf)
             # print(sestiuhelniky)
-            if button1.isOver(pos):
-                print(score)
-                a = math.floor(random.randint(0, len(reading) - 1))
-                odpoved = reading[a][1]
-                random.shuffle(rozmery)
-                otazka = reading[a][0]
-                zakliknuti = False
+            if odpovedK == False:
+                if button1.isOver(pos):
+                    #print(score)
+                    a = math.floor(random.randint(0, len(reading) - 1))
+                    odpoved = reading[a][1]
+                    random.shuffle(rozmery)
+                    otazka = reading[a][0]
+                    zakliknuti = False
+                    odpovedK = True
+                    print("zakliknuto")
 
-                for j in range(3):
-                    spatne[j] = reading[math.floor(random.randint(0, len(reading) - 1))][1]
-                    while spatne[j] == odpoved:
+                    for j in range(3):
                         spatne[j] = reading[math.floor(random.randint(0, len(reading) - 1))][1]
+                        while spatne[j] == odpoved:
+                            spatne[j] = reading[math.floor(random.randint(0, len(reading) - 1))][1]
 
-                button1 = buttons.Buttons((0, 255, 0), rozmery[0], 750,
-                                          para.obrazovka_x / 4 - (para.obrazovka_x / 100 + para.obrazovka_x / 40), 100,
-                                          odpoved)
-                button2 = buttons.Buttons((0, 255, 0), rozmery[1], 750,
-                                          para.obrazovka_x / 4 - (para.obrazovka_x / 100 + para.obrazovka_x / 40), 100,
-                                          spatne[0])
-                button3 = buttons.Buttons((0, 255, 0), rozmery[2], 750,
-                                          para.obrazovka_x / 4 - (para.obrazovka_x / 100 + para.obrazovka_x / 40), 100,
-                                          spatne[1])
-                button4 = buttons.Buttons((0, 255, 0), rozmery[3], 750,
-                                          para.obrazovka_x / 4 - (para.obrazovka_x / 100 + para.obrazovka_x / 40), 100,
-                                          spatne[2])
-                question = buttons.Buttons((0, 0, 0), para.obrazovka_x / 5, 760, 500, 45, otazka)
+                    button1 = buttons.Buttons(barva, rozmery[0], 850,
+                                              para.obrazovka_x / 4 - (para.obrazovka_x / 100 + para.obrazovka_x / 40), 100,
+                                              odpoved)
+                    button2 = buttons.Buttons(barva, rozmery[1], 850,
+                                              para.obrazovka_x / 4 - (para.obrazovka_x / 100 + para.obrazovka_x / 40), 100,
+                                              spatne[0])
+                    button3 = buttons.Buttons(barva, rozmery[2], 850,
+                                              para.obrazovka_x / 4 - (para.obrazovka_x / 100 + para.obrazovka_x / 40), 100,
+                                              spatne[1])
+                    button4 = buttons.Buttons(barva, rozmery[3], 850,
+                                              para.obrazovka_x / 4 - (para.obrazovka_x / 100 + para.obrazovka_x / 40), 100,
+                                              spatne[2])
+                    question = buttons.Buttons((0, 0, 0), para.obrazovka_x / 5, 760, 500, 45, otazka)
+                    score += 1
 
-                score += 1
 
-            elif button2.isOver(pos):
-                a = math.floor(random.randint(0, len(reading) - 1))
-                odpoved = reading[a][1]
-                random.shuffle(rozmery)
-                otazka = reading[a][0]
-                zakliknuti = False
+                elif button2.isOver(pos):
+                    a = math.floor(random.randint(0, len(reading) - 1))
+                    odpoved = reading[a][1]
+                    random.shuffle(rozmery)
+                    otazka = reading[a][0]
+                    zakliknuti = False
+                    odpovedK = False
 
-                for j in range(3):
-                    spatne[j] = reading[math.floor(random.randint(0, len(reading) - 1))][1]
-                    while spatne[j] == odpoved:
+                    for j in range(3):
                         spatne[j] = reading[math.floor(random.randint(0, len(reading) - 1))][1]
+                        while spatne[j] == odpoved:
+                            spatne[j] = reading[math.floor(random.randint(0, len(reading) - 1))][1]
 
-                button1 = buttons.Buttons((0, 255, 0), rozmery[0], 750,
-                                          para.obrazovka_x / 4 - (para.obrazovka_x / 100 + para.obrazovka_x / 40), 100,
-                                          odpoved)
-                button2 = buttons.Buttons((0, 255, 0), rozmery[1], 750,
-                                          para.obrazovka_x / 4 - (para.obrazovka_x / 100 + para.obrazovka_x / 40), 100,
-                                          spatne[0])
-                button3 = buttons.Buttons((0, 255, 0), rozmery[2], 750,
-                                          para.obrazovka_x / 4 - (para.obrazovka_x / 100 + para.obrazovka_x / 40), 100,
-                                          spatne[1])
-                button4 = buttons.Buttons((0, 255, 0), rozmery[3], 750,
-                                          para.obrazovka_x / 4 - (para.obrazovka_x / 100 + para.obrazovka_x / 40), 100,
-                                          spatne[2])
-                question = buttons.Buttons((0, 0, 0), para.obrazovka_x / 5, 760, 500, 45, otazka)
+                    button1 = buttons.Buttons(barva, rozmery[0], 850,
+                                              para.obrazovka_x / 4 - (para.obrazovka_x / 100 + para.obrazovka_x / 40), 100,
+                                              odpoved)
+                    button2 = buttons.Buttons(barva, rozmery[1], 850,
+                                              para.obrazovka_x / 4 - (para.obrazovka_x / 100 + para.obrazovka_x / 40), 100,
+                                              spatne[0])
+                    button3 = buttons.Buttons(barva, rozmery[2], 850,
+                                              para.obrazovka_x / 4 - (para.obrazovka_x / 100 + para.obrazovka_x / 40), 100,
+                                              spatne[1])
+                    button4 = buttons.Buttons(barva, rozmery[3], 850,
+                                              para.obrazovka_x / 4 - (para.obrazovka_x / 100 + para.obrazovka_x / 40), 100,
+                                              spatne[2])
+                    question = buttons.Buttons((0, 0, 0), para.obrazovka_x / 5, 760, 500, 45, otazka)
+                    para.zakliknutiB = True
+                    para.premena2 = para.zacinajici_hrac
+                    para.zacinajici_hrac = para.premena
+                    para.premena = para.premena2
 
-            elif button3.isOver(pos):
-                a = math.floor(random.randint(0, len(reading) - 1))
-                odpoved = reading[a][1]
-                random.shuffle(rozmery)
-                otazka = reading[a][0]
-                zakliknuti = False
+                elif button3.isOver(pos):
+                    a = math.floor(random.randint(0, len(reading) - 1))
+                    odpoved = reading[a][1]
+                    random.shuffle(rozmery)
+                    otazka = reading[a][0]
+                    zakliknuti = False
+                    odpovedK = False
 
-                for j in range(3):
-                    spatne[j] = reading[math.floor(random.randint(0, len(reading) - 1))][1]
-                    while spatne[j] == odpoved:
+                    for j in range(3):
                         spatne[j] = reading[math.floor(random.randint(0, len(reading) - 1))][1]
+                        while spatne[j] == odpoved:
+                            spatne[j] = reading[math.floor(random.randint(0, len(reading) - 1))][1]
 
-                button1 = buttons.Buttons((0, 255, 0), rozmery[0], 750,
-                                          para.obrazovka_x / 4 - (para.obrazovka_x / 100 + para.obrazovka_x / 40), 100,
-                                          odpoved)
-                button2 = buttons.Buttons((0, 255, 0), rozmery[1], 750,
-                                          para.obrazovka_x / 4 - (para.obrazovka_x / 100 + para.obrazovka_x / 40), 100,
-                                          spatne[0])
-                button3 = buttons.Buttons((0, 255, 0), rozmery[2], 750,
-                                          para.obrazovka_x / 4 - (para.obrazovka_x / 100 + para.obrazovka_x / 40), 100,
-                                          spatne[1])
-                button4 = buttons.Buttons((0, 255, 0), rozmery[3], 750,
-                                          para.obrazovka_x / 4 - (para.obrazovka_x / 100 + para.obrazovka_x / 40), 100,
-                                          spatne[2])
-                question = buttons.Buttons((0, 0, 0), para.obrazovka_x / 5, 760, 500, 45, otazka)
+                    button1 = buttons.Buttons(barva, rozmery[0], 850,
+                                              para.obrazovka_x / 4 - (para.obrazovka_x / 100 + para.obrazovka_x / 40), 100,
+                                              odpoved)
+                    button2 = buttons.Buttons(barva, rozmery[1], 850,
+                                              para.obrazovka_x / 4 - (para.obrazovka_x / 100 + para.obrazovka_x / 40), 100,
+                                              spatne[0])
+                    button3 = buttons.Buttons(barva, rozmery[2], 850,
+                                              para.obrazovka_x / 4 - (para.obrazovka_x / 100 + para.obrazovka_x / 40), 100,
+                                              spatne[1])
+                    button4 = buttons.Buttons(barva, rozmery[3], 850,
+                                              para.obrazovka_x / 4 - (para.obrazovka_x / 100 + para.obrazovka_x / 40), 100,
+                                              spatne[2])
+                    question = buttons.Buttons((0, 0, 0), para.obrazovka_x / 5, 760, 500, 45, otazka)
+                    para.zakliknutiB = True
+                    para.premena2 = para.zacinajici_hrac
+                    para.zacinajici_hrac = para.premena
+                    para.premena = para.premena2
 
-            elif button4.isOver(pos):
-                a = math.floor(random.randint(0, len(reading) - 1))
-                odpoved = reading[a][1]
-                random.shuffle(rozmery)
-                otazka = reading[a][0]
-                zakliknuti = False
+                elif button4.isOver(pos):
+                    a = math.floor(random.randint(0, len(reading) - 1))
+                    odpoved = reading[a][1]
+                    random.shuffle(rozmery)
+                    otazka = reading[a][0]
+                    zakliknuti = False
+                    odpovedK = False
 
-                for j in range(3):
-                    spatne[j] = reading[math.floor(random.randint(0, len(reading) - 1))][1]
-                    while spatne[j] == odpoved:
+                    for j in range(3):
                         spatne[j] = reading[math.floor(random.randint(0, len(reading) - 1))][1]
+                        while spatne[j] == odpoved:
+                            spatne[j] = reading[math.floor(random.randint(0, len(reading) - 1))][1]
 
-                button1 = buttons.Buttons((0, 255, 0), rozmery[0], 750,
-                                          para.obrazovka_x / 4 - (para.obrazovka_x / 100 + para.obrazovka_x / 40), 100,
-                                          odpoved)
-                button2 = buttons.Buttons((0, 255, 0), rozmery[1], 750,
-                                          para.obrazovka_x / 4 - (para.obrazovka_x / 100 + para.obrazovka_x / 40), 100,
-                                          spatne[0])
-                button3 = buttons.Buttons((0, 255, 0), rozmery[2], 750,
-                                          para.obrazovka_x / 4 - (para.obrazovka_x / 100 + para.obrazovka_x / 40), 100,
-                                          spatne[1])
-                button4 = buttons.Buttons((0, 255, 0), rozmery[3], 750,
-                                          para.obrazovka_x / 4 - (para.obrazovka_x / 100 + para.obrazovka_x / 40), 100,
-                                          spatne[2])
-                question = buttons.Buttons((0, 0, 0), para.obrazovka_x / 5, 760, 500, 45, otazka)
+                    button1 = buttons.Buttons(barva, rozmery[0], 850,
+                                              para.obrazovka_x / 4 - (para.obrazovka_x / 100 + para.obrazovka_x / 40), 100,
+                                              odpoved)
+                    button2 = buttons.Buttons(barva, rozmery[1], 850,
+                                              para.obrazovka_x / 4 - (para.obrazovka_x / 100 + para.obrazovka_x / 40), 100,
+                                              spatne[0])
+                    button3 = buttons.Buttons(barva, rozmery[2], 850,
+                                              para.obrazovka_x / 4 - (para.obrazovka_x / 100 + para.obrazovka_x / 40), 100,
+                                              spatne[1])
+                    button4 = buttons.Buttons(barva, rozmery[3], 850,
+                                              para.obrazovka_x / 4 - (para.obrazovka_x / 100 + para.obrazovka_x / 40), 100,
+                                              spatne[2])
+                    question = buttons.Buttons((0, 0, 0), para.obrazovka_x / 5, 760, 500, 45, otazka)
+                    para.zakliknutiB = True
+                    para.premena2 = para.zacinajici_hrac
+                    para.zacinajici_hrac = para.premena
+                    para.premena = para.premena2
             for entity in sestiuhelniky:
-                if pixel == entity.DEFIbarva and not zakliknuti:
+                if pixel == entity.DEFIbarva and odpovedK:
                     if entity.DEFIbarva[1] == 0:
                         para.premena2 = para.zacinajici_hrac
                         para.zacinajici_hrac = para.premena
@@ -397,175 +432,178 @@ while para.running:
                         sestiuhelniky.update(pos, pixel)
                         zakliknuti = True
                         # pole_otazky.update()#DOKONCIT
-                        print(entity.cislo)
+                        #print(entity.cislo)
                         para.zacatek = False
-                        if para.zacinajici_hrac == True:
-                            sestiuhelniky_zabrane_O.add(entity)
-                            zabrane_O.add(entity)
-                            while len(zabrane_O) > 0:
-                                for entityO in zabrane_O:
-                                    for entityO2 in sestiuhelniky_zabrane_O:
-                                        if entityO.cislo[0] - 1 == entityO2.cislo[0] and entityO.cislo[1] == \
-                                                entityO2.cislo[1] and entityO2.orandzova == False:
-                                            if entityO2.podminka[0] == True:
-                                                podminka_leva = True
-                                            if entityO2.podminka[1] == True:
-                                                podminka_dolni = True
-                                            if entityO2.podminka[2] == True:
-                                                podminka_prava = True
-                                            zabrane_O.add(entityO2)
-                                            entityO2.orandzova = True
-                                            # print("nalezen vpravo")
-                                        if entityO.cislo[0] - 1 == entityO2.cislo[0] and entityO.cislo[1] - 1 == \
-                                                entityO2.cislo[1] and entityO2.orandzova == False:
-                                            if entityO2.podminka[0] == True:
-                                                podminka_leva = True
-                                            if entityO2.podminka[1] == True:
-                                                podminka_dolni = True
-                                            if entityO2.podminka[2] == True:
-                                                podminka_prava = True
-                                            zabrane_O.add(entityO2)
-                                            entityO2.orandzova = True
-                                            # print("nalezen nahore vpravo")
-                                        if entityO.cislo[0] == entityO2.cislo[0] and entityO.cislo[1] - 1 == \
-                                                entityO2.cislo[1] and entityO2.orandzova == False:
-                                            if entityO2.podminka[0] == True:
-                                                podminka_leva = True
-                                            if entityO2.podminka[1] == True:
-                                                podminka_dolni = True
-                                            if entityO2.podminka[2] == True:
-                                                podminka_prava = True
-                                            zabrane_O.add(entityO2)
-                                            entityO2.orandzova = True
-                                            # print("nalezen nahore vlevo")
-                                        if entityO.cislo[0] + 1 == entityO2.cislo[0] and entityO.cislo[1] == \
-                                                entityO2.cislo[1] and entityO2.orandzova == False:
-                                            if entityO2.podminka[0] == True:
-                                                podminka_leva = True
-                                            if entityO2.podminka[1] == True:
-                                                podminka_dolni = True
-                                            if entityO2.podminka[2] == True:
-                                                podminka_prava = True
-                                            zabrane_O.add(entityO2)
-                                            entityO2.orandzova = True
-                                            # print("nalezen vlevo")
-                                        if entityO.cislo[0] + 1 == entityO2.cislo[0] and entityO.cislo[1] + 1 == \
-                                                entityO2.cislo[1] and entityO2.orandzova == False:
-                                            if entityO2.podminka[0] == True:
-                                                podminka_leva = True
-                                            if entityO2.podminka[1] == True:
-                                                podminka_dolni = True
-                                            if entityO2.podminka[2] == True:
-                                                podminka_prava = True
-                                            zabrane_O.add(entityO2)
-                                            entityO2.orandzova = True
-                                            # print("nalezen dole vlevo")
-                                        if entityO.cislo[0] == entityO2.cislo[0] and entityO.cislo[1] + 1 == \
-                                                entityO2.cislo[1] and entityO2.orandzova == False:
-                                            if entityO2.podminka[0] == True:
-                                                podminka_leva = True
-                                            if entityO2.podminka[1] == True:
-                                                podminka_dolni = True
-                                            if entityO2.podminka[2] == True:
-                                                podminka_prava = True
-                                            zabrane_O.add(entityO2)
-                                            entityO2.orandzova = True
-                                            # print("nalezen dole vpravo")
-                                        if podminka_dolni and podminka_leva and podminka_prava:
-                                            print("KONEC ORANDZOVA")
-                                            para.vitezO = True
-                                zabrane_O.remove(entityO)
-                            for ENTITY in sestiuhelniky:
-                                ENTITY.orandzova = False
-                            print("-")
-                            podminka_prava = False
-                            podminka_dolni = False
-                            podminka_leva = False
-                            # dokonči
-                        if para.zacinajici_hrac == False:
-                            sestiuhelniky_zabrane_M.add(entity)
-                            zabrane_M.add(entity)
-                            while len(zabrane_M) > 0:
-                                for entityM in zabrane_M:
-                                    for entityM2 in sestiuhelniky_zabrane_M:
-                                        if entityM.cislo[0] - 1 == entityM2.cislo[0] and entityM.cislo[1] == \
-                                                entityM2.cislo[1] and entityM2.modra == False:
-                                            if entityM2.podminka[0] == True:
-                                                podminka_levaM = True
-                                            if entityM2.podminka[1] == True:
-                                                podminka_dolniM = True
-                                            if entityM2.podminka[2] == True:
-                                                podminka_pravaM = True
-                                            zabrane_M.add(entityM2)
-                                            entityM2.modra = True
-                                            print("nalezen vpravo")
-                                        if entityM.cislo[0] - 1 == entityM2.cislo[0] and entityM.cislo[1] - 1 == \
-                                                entityM2.cislo[1] and entityM2.modra == False:
-                                            if entityM2.podminka[0] == True:
-                                                podminka_levaM = True
-                                            if entityM2.podminka[1] == True:
-                                                podminka_dolniM = True
-                                            if entityM2.podminka[2] == True:
-                                                podminka_pravaM = True
-                                            zabrane_M.add(entityM2)
-                                            entityM2.modra = True
-                                            print("nalezen nahore vpravo")
-                                        if entityM.cislo[0] == entityM2.cislo[0] and entityM.cislo[1] - 1 == \
-                                                entityM2.cislo[1] and entityM2.modra == False:
-                                            if entityM2.podminka[0] == True:
-                                                podminka_levaM = True
-                                            if entityM2.podminka[1] == True:
-                                                podminka_dolniM = True
-                                            if entityM2.podminka[2] == True:
-                                                podminka_pravaM = True
-                                            zabrane_M.add(entityM2)
-                                            entityM2.modra = True
-                                            print("nalezen nahore vlevo")
-                                        if entityM.cislo[0] + 1 == entityM2.cislo[0] and entityM.cislo[1] == \
-                                                entityM2.cislo[1] and entityM2.modra == False:
-                                            if entityM2.podminka[0] == True:
-                                                podminka_levaM = True
-                                            if entityM2.podminka[1] == True:
-                                                podminka_dolniM = True
-                                            if entityM2.podminka[2] == True:
-                                                podminka_pravaM = True
-                                            zabrane_M.add(entityO2)
-                                            entityM2.modra = True
-                                            print("nalezen vlevo")
-                                        if entityM.cislo[0] + 1 == entityM2.cislo[0] and entityM.cislo[1] + 1 == \
-                                                entityM2.cislo[1] and entityM2.modra == False:
-                                            if entityM2.podminka[0] == True:
-                                                podminka_levaM = True
-                                            if entityM2.podminka[1] == True:
-                                                podminka_dolniM = True
-                                            if entityM2.podminka[2] == True:
-                                                podminka_pravaM = True
-                                            zabrane_M.add(entityM2)
-                                            entityM2.modra = True
-                                            print("nalezen dole vlevo")
-                                        if entityM.cislo[0] == entityM2.cislo[0] and entityM.cislo[1] + 1 == \
-                                                entityM2.cislo[1] and entityM2.modra == False:
-                                            if entityM2.podminka[0] == True:
-                                                podminka_levaM = True
-                                            if entityM2.podminka[1] == True:
-                                                podminka_dolniM = True
-                                            if entityM2.podminka[2] == True:
-                                                podminka_pravaM = True
-                                            zabrane_M.add(entityM2)
-                                            entityM2.modra = True
-                                            print("nalezen dole vpravo")
-                                        if podminka_dolniM and podminka_levaM and podminka_pravaM:
-                                            print("KONEC MODRA")
-                                            para.vitezM = True
-                                zabrane_M.remove(entityM)
-
-                            for ENTITY in sestiuhelniky:
-                                ENTITY.modra = False
-                            print("-")
-                            podminka_pravaM = False
-                            podminka_dolniM = False
-                            podminka_levaM = False
-
+                    if para.zacinajici_hrac == True:
+                        sestiuhelniky_zabrane_O.add(entity)
+                        zabrane_O.add(entity)
+                        while len(zabrane_O) > 0:
+                            for entityO in zabrane_O:
+                                for entityO2 in sestiuhelniky_zabrane_O:
+                                    if entityO.cislo[0] - 1 == entityO2.cislo[0] and entityO.cislo[1] == \
+                                            entityO2.cislo[1] and entityO2.orandzova == False:
+                                        if entityO2.podminka[0] == True:
+                                            podminka_leva = True
+                                        if entityO2.podminka[1] == True:
+                                            podminka_dolni = True
+                                        if entityO2.podminka[2] == True:
+                                            podminka_prava = True
+                                        zabrane_O.add(entityO2)
+                                        entityO2.orandzova = True
+                                        # print("nalezen vpravo")
+                                    if entityO.cislo[0] - 1 == entityO2.cislo[0] and entityO.cislo[1] - 1 == \
+                                            entityO2.cislo[1] and entityO2.orandzova == False:
+                                        if entityO2.podminka[0] == True:
+                                            podminka_leva = True
+                                        if entityO2.podminka[1] == True:
+                                            podminka_dolni = True
+                                        if entityO2.podminka[2] == True:
+                                            podminka_prava = True
+                                        zabrane_O.add(entityO2)
+                                        entityO2.orandzova = True
+                                        # print("nalezen nahore vpravo")
+                                    if entityO.cislo[0] == entityO2.cislo[0] and entityO.cislo[1] - 1 == \
+                                            entityO2.cislo[1] and entityO2.orandzova == False:
+                                        if entityO2.podminka[0] == True:
+                                            podminka_leva = True
+                                        if entityO2.podminka[1] == True:
+                                            podminka_dolni = True
+                                        if entityO2.podminka[2] == True:
+                                            podminka_prava = True
+                                        zabrane_O.add(entityO2)
+                                        entityO2.orandzova = True
+                                        # print("nalezen nahore vlevo")
+                                    if entityO.cislo[0] + 1 == entityO2.cislo[0] and entityO.cislo[1] == \
+                                            entityO2.cislo[1] and entityO2.orandzova == False:
+                                        if entityO2.podminka[0] == True:
+                                            podminka_leva = True
+                                        if entityO2.podminka[1] == True:
+                                            podminka_dolni = True
+                                        if entityO2.podminka[2] == True:
+                                            podminka_prava = True
+                                        zabrane_O.add(entityO2)
+                                        entityO2.orandzova = True
+                                        # print("nalezen vlevo")
+                                    if entityO.cislo[0] + 1 == entityO2.cislo[0] and entityO.cislo[1] + 1 == \
+                                            entityO2.cislo[1] and entityO2.orandzova == False:
+                                        if entityO2.podminka[0] == True:
+                                            podminka_leva = True
+                                        if entityO2.podminka[1] == True:
+                                            podminka_dolni = True
+                                        if entityO2.podminka[2] == True:
+                                            podminka_prava = True
+                                        zabrane_O.add(entityO2)
+                                        entityO2.orandzova = True
+                                        # print("nalezen dole vlevo")
+                                    if entityO.cislo[0] == entityO2.cislo[0] and entityO.cislo[1] + 1 == \
+                                            entityO2.cislo[1] and entityO2.orandzova == False:
+                                        if entityO2.podminka[0] == True:
+                                            podminka_leva = True
+                                        if entityO2.podminka[1] == True:
+                                            podminka_dolni = True
+                                        if entityO2.podminka[2] == True:
+                                            podminka_prava = True
+                                        zabrane_O.add(entityO2)
+                                        entityO2.orandzova = True
+                                        # print("nalezen dole vpravo")
+                                    if podminka_dolni and podminka_leva and podminka_prava:
+                                        # print("KONEC ORANDZOVA")
+                                        para.vitezO = True
+                            zabrane_O.remove(entityO)
+                        for ENTITY in sestiuhelniky:
+                            ENTITY.orandzova = False
+                        #print("-")
+                        podminka_prava = False
+                        podminka_dolni = False
+                        podminka_leva = False
+                        # dokonči
+                        redrawWin()
+                        odpovedK = False
+                    if para.zacinajici_hrac == False:
+                        sestiuhelniky_zabrane_M.add(entity)
+                        zabrane_M.add(entity)
+                        while len(zabrane_M) > 0:
+                            for entityM in zabrane_M:
+                                for entityM2 in sestiuhelniky_zabrane_M:
+                                    if entityM.cislo[0] - 1 == entityM2.cislo[0] and entityM.cislo[1] == \
+                                            entityM2.cislo[1] and entityM2.modra == False:
+                                        if entityM2.podminka[0] == True:
+                                            podminka_levaM = True
+                                        if entityM2.podminka[1] == True:
+                                            podminka_dolniM = True
+                                        if entityM2.podminka[2] == True:
+                                            podminka_pravaM = True
+                                        zabrane_M.add(entityM2)
+                                        entityM2.modra = True
+                                        #print("nalezen vpravo")
+                                    if entityM.cislo[0] - 1 == entityM2.cislo[0] and entityM.cislo[1] - 1 == \
+                                            entityM2.cislo[1] and entityM2.modra == False:
+                                        if entityM2.podminka[0] == True:
+                                            podminka_levaM = True
+                                        if entityM2.podminka[1] == True:
+                                            podminka_dolniM = True
+                                        if entityM2.podminka[2] == True:
+                                            podminka_pravaM = True
+                                        zabrane_M.add(entityM2)
+                                        entityM2.modra = True
+                                        #print("nalezen nahore vpravo")
+                                    if entityM.cislo[0] == entityM2.cislo[0] and entityM.cislo[1] - 1 == \
+                                            entityM2.cislo[1] and entityM2.modra == False:
+                                        if entityM2.podminka[0] == True:
+                                            podminka_levaM = True
+                                        if entityM2.podminka[1] == True:
+                                            podminka_dolniM = True
+                                        if entityM2.podminka[2] == True:
+                                            podminka_pravaM = True
+                                        zabrane_M.add(entityM2)
+                                        entityM2.modra = True
+                                        #print("nalezen nahore vlevo")
+                                    if entityM.cislo[0] + 1 == entityM2.cislo[0] and entityM.cislo[1] == \
+                                            entityM2.cislo[1] and entityM2.modra == False:
+                                        if entityM2.podminka[0] == True:
+                                            podminka_levaM = True
+                                        if entityM2.podminka[1] == True:
+                                            podminka_dolniM = True
+                                        if entityM2.podminka[2] == True:
+                                            podminka_pravaM = True
+                                        zabrane_M.add(entityO2)
+                                        entityM2.modra = True
+                                        #print("nalezen vlevo")
+                                    if entityM.cislo[0] + 1 == entityM2.cislo[0] and entityM.cislo[1] + 1 == \
+                                            entityM2.cislo[1] and entityM2.modra == False:
+                                        if entityM2.podminka[0] == True:
+                                            podminka_levaM = True
+                                        if entityM2.podminka[1] == True:
+                                            podminka_dolniM = True
+                                        if entityM2.podminka[2] == True:
+                                            podminka_pravaM = True
+                                        zabrane_M.add(entityM2)
+                                        entityM2.modra = True
+                                        #print("nalezen dole vlevo")
+                                    if entityM.cislo[0] == entityM2.cislo[0] and entityM.cislo[1] + 1 == \
+                                            entityM2.cislo[1] and entityM2.modra == False:
+                                        if entityM2.podminka[0] == True:
+                                            podminka_levaM = True
+                                        if entityM2.podminka[1] == True:
+                                            podminka_dolniM = True
+                                        if entityM2.podminka[2] == True:
+                                            podminka_pravaM = True
+                                        zabrane_M.add(entityM2)
+                                        entityM2.modra = True
+                                        #print("nalezen dole vpravo")
+                                    if podminka_dolniM and podminka_levaM and podminka_pravaM:
+                                        #print("KONEC MODRA")
+                                        para.vitezM = True
+                            zabrane_M.remove(entityM)
+                        for ENTITY in sestiuhelniky:
+                            ENTITY.modra = False
+                        #print("-")
+                        podminka_pravaM = False
+                        podminka_dolniM = False
+                        podminka_levaM = False
+                        redrawWin()
+                        odpovedK = False
+        '''
         if event.type == para.MOUSEMOTION:
             if button1.isOver(pos):
                 button1.color = (255, 0, 0)
@@ -583,22 +621,23 @@ while para.running:
                 button4.color = (255, 0, 0)
             else:
                 button4.color = ((100,100,100))
-                # print(sestiuhelniky_zabrane_M)
-            # hracO.update(sestiuhelniky_zabrane_O)
-            # hracM.update(sestiuhelniky_zabrane_M)
-            # sestiuhelniky_zabrane.update()
+        '''
+        # print(sestiuhelniky_zabrane_M)
+        # hracO.update(sestiuhelniky_zabrane_O)
+        # hracM.update(sestiuhelniky_zabrane_M)
+        # sestiuhelniky_zabrane.update()
 
-            # sestiuhelniky = ""
-            # sestiuhelniky = pygame.sprite.Group()
+        # sestiuhelniky = ""
+        # sestiuhelniky = pygame.sprite.Group()
 
-            # print(pos)
-            # print(pixel)
-            '''
+        # print(pos)
+        # print(pixel)
+        '''
             if sestiuhelnik.collidepoint(pos):
                 print(pos)
                 print(pixel)
-            '''
-        elif event.type == ADDSESTIUHELNIK and para.rada <= para.zadano:
+        '''
+        if event.type == ADDSESTIUHELNIK and para.rada <= para.zadano:
             novy_sestiuhelnik = Sestiuhelnik()
             sestiuhelniky.add(novy_sestiuhelnik)
     # zkušební střední polygon
@@ -615,7 +654,7 @@ while para.running:
     # Sestiuhelnik.update()
     # maska = pygame.mask.from_threshold(pygame.display, para.red)
     # pygame.maska.update()
-    #screen.fill(0,0,0)
+    # screen.fill(0,0,0)
     surf = pygame.Surface((50, 50))
     surf.fill((255, 255, 255))
     rect = surf.get_rect()
@@ -631,14 +670,19 @@ while para.running:
         barva = para.sed
         barva2 = para.orandzova
         barva3 = barva2
+        if odpovedK:
+            barva2 = (255,255,255)
     else:
         barva = para.modra
         barva2 = para.sed
         barva3 = barva
+        if odpovedK:
+            barva = (255,255,255)
     pygame.draw.polygon(para.obrazovka, barva, (hracM.bod1, hracM.bod2, hracM.bod3, hracM.bod4, hracM.bod5, hracM.bod6))
     pygame.draw.polygon(para.obrazovka, barva2,
                         (hracO.bod1, hracO.bod2, hracO.bod3, hracO.bod4, hracO.bod5, hracO.bod6))
     if para.vitezM or para.vitezO:
+        pygame.draw.rect(screen, (0, 0, 0), (0, 750, 1000, 250))
         # print("Přebarvení")
         barva = para.cerno
         barva2 = para.cerno
@@ -698,18 +742,19 @@ while para.running:
         barva3 = para.sed
     # pygame.display.flip()
     if para.vitezM:
+        pygame.draw.rect(screen, (0, 0, 0), (0, 750, 1000, 250))
         text = font.render("Vyhrává Modrý", True, para.modra, (0, 0, 0))
         textRect = text.get_rect()
         textRect = ((para.obrazovka_x - ((para.vrchol_x / 2.75 + para.velikost * 2.5 + para.vrchol_x - para.mezera))),
                     ((para.vrchol_y + 2 * para.velikost + para.odsazeni_y * para.zadano) + para.velikost * 3))
         screen.blit(text, textRect)
     if para.vitezO:
+        pygame.draw.rect(screen, (0, 0, 0), (0, 750, 1000, 250))
         text = font.render("Vyhrává Orandžový", True, para.orandzova, (0, 0, 0))
         textRect = text.get_rect()
         textRect = ((para.obrazovka_x - ((para.vrchol_x / 2.75 + para.velikost * 5 + para.vrchol_x - para.mezera))),
                     ((para.vrchol_y + 2 * para.velikost + para.odsazeni_y * para.zadano) + para.velikost * 3))
         screen.blit(text, textRect)
-
     pygame.display.flip()
     cas.tick(100)
     cas.tick(2000)

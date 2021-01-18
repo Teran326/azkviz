@@ -17,10 +17,12 @@ premena = False
 running = True
 #zacatek je k tomu aby se barvy nehodily hned pokud není otázka
 zacatek = True
+zacatekB = True #buttony
+zakliknutiB = False
 vitezM = False
 vitezO = False
-obrazovka_x = 1920
-obrazovka_y = 1080
+obrazovka_x = 1000 #1920
+obrazovka_y = 1000 #1080
 obrazovka = pygame.display.set_mode((obrazovka_x, obrazovka_y))
 #vrcholy pyramidy šestiúhelníků
 vrchol_x = obrazovka_x/2
@@ -29,6 +31,8 @@ red = (255,0,0,100)
 sed = (100,100,100)
 orandzova = (255,165,0)
 modra = (0,255,255)
+orandzovaA = (215,125,0)
+modraA = (0,205,205)
 cerno = (0,0,0)
 bila = (150,150,150)
 #redPlayer = (255,0,0,254)
